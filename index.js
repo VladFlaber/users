@@ -13,7 +13,7 @@ app.use(bodyParser.urlencoded({
 const PORT=config.get('port')||5000
 
 
-app.use("/api/users",require("./routes/users.routes"));
+app.use("/api/users",require("./src/routes/users.routes"));
 
 async  function start(){
     try{

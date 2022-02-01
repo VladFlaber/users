@@ -1,19 +1,19 @@
 const {Router} = require("express")
 const router = Router()
-const repo = require("../models/usersRepository")
+const repo = require("../Services/usersRepository")
 const {check, validationResult} = require("express-validator")
-
+const isAdmin=require("../middleware/authentication")
 //api/users/create
-router.post("/create",
+router.post("/create",isAdmin,
     [
         check("name", "Incorrect name").exists().isAlpha(),
         check(["health","attack","defense"], "incorrect value for health").isNumeric().exists(),
-
     ],
     async (req,
 
            res) => {
         try {
+
             const errors = validationResult(req);
             if (!errors.isEmpty()) {
                 return res.status(400).json({
@@ -71,7 +71,7 @@ router.get("/user/:id",
     }
 })
 //api/users/user/id
-router.delete("/user/:id",
+router.delete("/user/:id",isAdmin,
     [
         check("id", "Incorrect id").exists() ,
     ],
@@ -92,7 +92,7 @@ router.delete("/user/:id",
         res.status(500).json({message: "smth went wrong . deletion failed"})
     }
 })
-router.put("/user",
+router.put("/user",isAdmin,
     [
         check("id", "Incorrect id").exists() ,
         check("name", "Incorrect name").exists().isAlpha(),
@@ -110,7 +110,6 @@ router.put("/user",
         }
         const {id,name,health,attack,defense,source}=req.body;
         const user=repo.MakeUser(name,health,attack,defense,source)
-        console.log(id);
         await repo.edit(id,user);
         res.status(201).json({message: "user updated", user: user})
     }
