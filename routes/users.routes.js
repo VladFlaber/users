@@ -1,19 +1,28 @@
 const {Router} = require("express")
 const router = Router()
 const repo = require("../models/usersRepository")
+const {check, validationResult} = require("express-validator")
 
 //api/users/create
 router.post("/create",
+    [
+        check("name", "Incorrect name").exists().isAlpha(),
+        check(["health","attack","defense"], "incorrect value for health").isNumeric().exists(),
 
+    ],
     async (req,
+
            res) => {
         try {
-            const {name, health, attack, defense, source} = req.body
-            /*  const errors = validationResult(req);
-              if (!errors.isEmpty()) {
-                  return res.status(400).json({errors: errors.array(), message: "errors occurred"})
+            const errors = validationResult(req);
+            if (!errors.isEmpty()) {
+                return res.status(400).json({
+                    errors: errors.array(), message: "Data is empty or format is incorrect"
+                })
 
-              }*/
+            }
+            const {name, health, attack, defense, source} = req.body
+
             const newUser = repo.MakeUser(name, health, attack, defense, source);
 
             if (newUser) {
@@ -26,13 +35,33 @@ router.post("/create",
     })
 // api/users/users
 router.get("/users", async (req, res) => {
-    const Users = await repo.getAll()
-    res.status(201).json({users: Users})
+    try{
+        const Users = await repo.getAll()
+        res.status(201).json({users: Users})
+    }
+    catch (e){
+        res.status(500).json({message: "smth went wrong"})
+
+    }
+
 })
 
 //api/users/users/id
-router.get("/user/:id", async (req, res) => {
+router.get("/user/:id",
+    [
+        check("id", "Incorrect id").exists() ,
+    ],
+    async (req, res) => {
     try {
+
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            return res.status(400).json({
+                errors: errors.array(), message: "Data is empty or format is incorrect"
+            })
+
+        }
+      /*  errorsCheck(req,res)*/
         const id = req.params.id;
         const User = await repo.getById(id);
         res.status(201).json({user: User})
@@ -42,8 +71,19 @@ router.get("/user/:id", async (req, res) => {
     }
 })
 //api/users/user/id
-router.delete("/user/:id", async (req, res) => {
+router.delete("/user/:id",
+    [
+        check("id", "Incorrect id").exists() ,
+    ],
+    async (req, res) => {
     try {
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            return res.status(400).json({
+                errors: errors.array(), message: "Data is empty or format is incorrect"
+            })
+
+        }
         const id = req.params.id;
         await repo.remove(id);
         res.status(201).json({message: "user deleted", user: id})
@@ -52,9 +92,22 @@ router.delete("/user/:id", async (req, res) => {
         res.status(500).json({message: "smth went wrong . deletion failed"})
     }
 })
-router.put("/user", async (req, res) => {
-    try {
+router.put("/user",
+    [
+        check("id", "Incorrect id").exists() ,
+        check("name", "Incorrect name").exists().isAlpha(),
+        check(["health","attack","defense"], "incorrect value for health").isNumeric().exists(),
 
+    ],
+    async (req, res) => {
+    try {
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            return res.status(400).json({
+                errors: errors.array(), message: "Data is empty or format is incorrect"
+            })
+
+        }
         const {id,name,health,attack,defense,source}=req.body;
         const user=repo.MakeUser(name,health,attack,defense,source)
         console.log(id);
@@ -65,4 +118,5 @@ router.put("/user", async (req, res) => {
         res.status(500).json({message: "smth went wrong . update failed"})
     }
 })
+
 module.exports = router;
