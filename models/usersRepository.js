@@ -16,11 +16,15 @@ class usersRepository {
     static async getById(_id) {
 
         try{
-            return await User.findById(_id);
+            if(_id){
+                return await User.findById(_id);
+            }
+            else{
+                throw  new Error("user not found") ;
+            }
         }
         catch (e){
             console.log (JSON.stringify({loc: "userRepository : getAll", err: e.message}));
-
         }
     }
 
@@ -30,7 +34,7 @@ class usersRepository {
                     const user = new User(newUser);
                     await user.save();
             } else {
-                throw      "smth wentworng";
+                throw  new Error("no data") ;
             }
         } catch (e) {
             console.log (JSON.stringify({loc: "userRepository : add", err: e.message}));
@@ -42,7 +46,7 @@ class usersRepository {
             if (user&&id) {
               await  User.findByIdAndUpdate(id, user)
             } else {
-                throw   "user not found";
+                throw  new Error("user not found") ;
             }
         } catch (e) {
             console.log( JSON.stringify({loc: "userRepository : edit", err: e.message}));
@@ -54,7 +58,7 @@ class usersRepository {
             if (id) {
               await  User.findByIdAndDelete(id)
             } else {
-                throw "user not found";
+                throw new Error( "user not found");
             }
         } catch (e) {
             console.log( JSON.stringify({loc: "userRepository : remove", err: e.message}));
