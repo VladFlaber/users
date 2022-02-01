@@ -3,17 +3,17 @@ const db = require("mongoose")
 const {json} = require("express");
 const {model} = require("mongoose");
 
-class usersRepository {
-    static async getAll() {
+const usersRepository ={
+      async getAll() {
         try {
             return await User.find();
         }
         catch (e) {
             console.log (JSON.stringify({loc: "userRepository : getAll", err: e.message}));
         }
-    }
+    },
 
-    static async getById(_id) {
+      async getById(_id) {
 
         try{
             if(_id){
@@ -26,9 +26,9 @@ class usersRepository {
         catch (e){
             console.log (JSON.stringify({loc: "userRepository : getAll", err: e.message}));
         }
-    }
+    },
 
-    static async  create(newUser) {
+      async  create(newUser) {
         try {
             if (newUser) {
                     const user = new User(newUser);
@@ -39,9 +39,9 @@ class usersRepository {
         } catch (e) {
             console.log (JSON.stringify({loc: "userRepository : add", err: e.message}));
         }
-    }
+    },
 
-    static  async  edit(id,user) {
+       async  edit(id,user) {
         try {
             if (user&&id) {
               await  User.findByIdAndUpdate(id, user)
@@ -51,9 +51,9 @@ class usersRepository {
         } catch (e) {
             console.log( JSON.stringify({loc: "userRepository : edit", err: e.message}));
         }
-    }
+    },
 
-    static  async  remove(id) {
+       async  remove(id) {
         try {
             if (id) {
               await  User.findByIdAndDelete(id)
@@ -63,13 +63,13 @@ class usersRepository {
         } catch (e) {
             console.log( JSON.stringify({loc: "userRepository : remove", err: e.message}));
         }
-    }
+    },
 
-    static validateUser(user) {
+     validateUser(user) {
         return User.name.length > 0 && !isNaN(user.attack) && !isNaN(user.defense) && !isNaN(user.health);
-    }
+    },
 
-    static MakeUser(name, health, attack, defense, source) {
+      MakeUser(name, health, attack, defense, source) {
         return {
             name: name,
             health: health,
