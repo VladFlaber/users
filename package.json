@@ -18,5 +18,11 @@
   "bugs": {
     "url": "https://github.com/VladFlaber/users/issues"
   },
-  "homepage": "https://github.com/VladFlaber/users#readme"
+  "homepage": "https://github.com/VladFlaber/users#readme",
+  "dependencies": {
+    "body-parser": "^1.19.1",
+    "config": "^3.3.7",
+    "express": "^4.17.2",
+    "mongoose": "^6.1.9"
+  }
 }
